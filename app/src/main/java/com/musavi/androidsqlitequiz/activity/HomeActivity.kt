@@ -35,7 +35,7 @@ class HomeActivity : AppCompatActivity() {
     }
     //Fungsi viewRecord yang digunakan untuk menampilkan isi table contacts
     fun viewRecord(){
-        //Membuat instanisasi databasehandler
+        //Membuat inisialisasi databasehandler
         val databaseHandler: DatabaseHandler = DatabaseHandler(this)
         //Memamnggil fungsi viewemployee dari database handler untuk mengambil data
         val emp: List<EmpModelClass> = databaseHandler.viewEmployee()
