@@ -13,12 +13,14 @@ import com.musavi.androidsqlitequiz.`object`.LoginModelClass
 class DatabaseHandler(context: Context):
     SQLiteOpenHelper(context,DATABASE_NAME,null,DATABASE_VERSION) {
     companion object {
+        //Inisialisasi variable untuk database
         private val DATABASE_VERSION = 1
         private val DATABASE_NAME = "EmployeeDatabase"
         private val TABLE_CONTACTS = "EmployeeTable"
         private val KEY_ID = "id"
         private val KEY_NAME = "name"
         private val KEY_EMAIL = "email"
+        private val KEY_PHONE = "phone"
 
         private val TABLE_USER = "UserTable"
         private val KEY_UID = "logId"
@@ -27,10 +29,10 @@ class DatabaseHandler(context: Context):
         private val KEY_UPASSWORD = "LogPassword"
     }
     override fun onCreate(db: SQLiteDatabase?) {
-        // membuat tabel beserta definisi kolomnya
+        //Membuat tabel beserta definisi kolomnya
         val CREATE_CONTACTS_TABLE = ("CREATE TABLE " + TABLE_CONTACTS + "("
                 + KEY_ID + " INTEGER PRIMARY KEY AUTOINCREMENT," + KEY_NAME + " TEXT,"
-                + KEY_EMAIL + " TEXT" + "); ")
+                + KEY_EMAIL + " TEXT," + KEY_PHONE + " TEXT" + "); ")
         db?.execSQL(CREATE_CONTACTS_TABLE)
         val CREATE_USER_TABLE = ("CREATE TABLE " + TABLE_USER +
                 "(" + KEY_UID + " INTEGER PRIMARY KEY AUTOINCREMENT," + KEY_UEMAIL + " TEXT," + KEY_UUSername + " TEXT," + KEY_UPASSWORD + " TEXT " + ");")
@@ -41,23 +43,24 @@ class DatabaseHandler(context: Context):
         db!!.execSQL("DROP TABLE IF EXISTS " + TABLE_CONTACTS + "," + TABLE_USER)
         onCreate(db)
     }
-
-    fun addUser(log: LoginModelClass){
+    //Fungsi untuk Menambahkan user
+    fun addUser(login: LoginModelClass){
         val db = this.writableDatabase
 
         val contentValues = ContentValues()
-        contentValues.put(KEY_UEMAIL, log.logUsername)
-        contentValues.put(KEY_UPASSWORD, log.logPassword)
+        contentValues.put(KEY_UEMAIL, login.logUsername)
+        contentValues.put(KEY_UPASSWORD, login.logPassword)
 
         db.insert(TABLE_USER, null, contentValues)
         db.close()
     }
-
+    //Fungsi untuk cek username dan password
     fun checkUser(username: String, password: String): Boolean{
         val columns = arrayOf(KEY_UID)
         val db = this.readableDatabase
         val selection = "$KEY_UEMAIL = ? AND $KEY_UPASSWORD =?"
         val selectionArgs = arrayOf(username, password)
+
         val cursor = db.query(TABLE_USER,
             columns,
             selection,
@@ -75,15 +78,12 @@ class DatabaseHandler(context: Context):
 
         return false
     }
-
-    fun checkUser(email: String): Boolean{
+    //Fungsi untuk cek username apakah sudah terdapat pada databse
+    fun checkUser(username: String): Boolean{
         val columns = arrayOf(KEY_UID)
-
         val db = this.readableDatabase
-
         val selection = "$KEY_UEMAIL = ? "
-
-        val selectionArgs = arrayOf(email)
+        val selectionArgs = arrayOf(username)
 
         val cursor = db.query(TABLE_USER,
             columns,
@@ -103,20 +103,21 @@ class DatabaseHandler(context: Context):
         return false
     }
 
-    // fungsi untuk menambahkan data
+    // fungsi untuk menambahkan data employee
     fun addEmployee(emp: EmpModelClass):Long{
         val db = this.writableDatabase
         val contentValues = ContentValues()
 //        contentValues.put(KEY_ID, emp.userId)
         contentValues.put(KEY_NAME, emp.userName)
-        contentValues.put(KEY_EMAIL,emp.userEmail )
+        contentValues.put(KEY_EMAIL,emp.userEmail)
+        contentValues.put(KEY_PHONE,emp.userPhone)
         // menambahkan data pada tabel
         val success = db.insert(TABLE_CONTACTS, null, contentValues)
         db.close()
         return success
     }
 
-    // fungsi untuk menampilkan data dari tabel ke UI
+    // fungsi untuk menampilkan data dari tabel ke User Interface
     fun viewEmployee():List<EmpModelClass>{
         val empList:ArrayList<EmpModelClass> = ArrayList<EmpModelClass>()
         val selectQuery = "SELECT  * FROM $TABLE_CONTACTS"
@@ -131,12 +132,14 @@ class DatabaseHandler(context: Context):
         var userId: Int
         var userName: String
         var userEmail: String
+        var userPhone: String
         if (cursor.moveToFirst()) {
             do {
                 userId = cursor.getInt(cursor.getColumnIndex("id"))
                 userName = cursor.getString(cursor.getColumnIndex("name"))
                 userEmail = cursor.getString(cursor.getColumnIndex("email"))
-                val emp= EmpModelClass(userId = userId, userName = userName, userEmail = userEmail)
+                userPhone = cursor.getString(cursor.getColumnIndex("phone"))
+                val emp= EmpModelClass(userId = userId, userName = userName, userEmail = userEmail, userPhone = userPhone)
                 empList.add(emp)
             } while (cursor.moveToNext())
         }
@@ -148,11 +151,10 @@ class DatabaseHandler(context: Context):
         val contentValues = ContentValues()
         contentValues.put(KEY_ID, emp.userId)
         contentValues.put(KEY_NAME, emp.userName)
-        contentValues.put(KEY_EMAIL,emp.userEmail )
-
+        contentValues.put(KEY_EMAIL,emp.userEmail)
+        contentValues.put(KEY_PHONE,emp.userPhone)
         // memperbarui data
         val success = db.update(TABLE_CONTACTS, contentValues,"id="+emp.userId,null)
-
         // menutup koneksi ke database
         db.close()
         return success
@@ -161,12 +163,10 @@ class DatabaseHandler(context: Context):
     fun deleteEmployee(emp: EmpModelClass):Int{
         val db = this.writableDatabase
         val contentValues = ContentValues()
-
         // employee id dari data yang akan dihapus
         contentValues.put(KEY_ID, emp.userId)
         // query untuk menghapus ata
         val success = db.delete(TABLE_CONTACTS,"id="+emp.userId,null)
-
         // menutup koneksi ke database
         db.close()
         return success

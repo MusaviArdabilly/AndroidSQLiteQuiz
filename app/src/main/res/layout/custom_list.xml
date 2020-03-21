@@ -2,7 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:paddingLeft="10dp"
+    android:paddingLeft="0dp"
     android:paddingRight="10dp"
     android:paddingTop="2dp"
     android:paddingBottom="2dp"
@@ -14,9 +14,9 @@
         android:layout_weight="1.5">
 
         <ImageView
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:background="@drawable/ic_account_circle_black_24dp"/>
+            android:layout_width="65dp"
+            android:layout_height="65dp"
+            android:background="@drawable/ic_person_black_24dp"/>
 
     </LinearLayout>
 
@@ -24,6 +24,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="7.5"
+        android:paddingLeft="5dp"
         android:orientation="vertical">
 
         <TextView
@@ -31,6 +32,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Name"
+            android:textSize="16dp"
             android:textStyle="bold"
             android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium"/>
 
@@ -39,6 +41,15 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Email"
+            android:textSize="14dp"
+            android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium"/>
+
+        <TextView
+            android:id="@+id/textViewPhone"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Phone"
+            android:textSize="14dp"
             android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium"/>
 
     </LinearLayout>
@@ -54,6 +65,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="end"
             android:text="Id"
+            android:textSize="12dp"
             android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium"/>
 
     </LinearLayout>
